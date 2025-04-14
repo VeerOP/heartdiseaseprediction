@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Patient Records</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; font-size: 0.9em; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; position: sticky; top: 0; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .container { overflow-x: auto; margin: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Complete Patient Records</h1>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Chest Pain</th>
+                <th>BP</th>
+                <th>Cholesterol</th>
+                <th>Max HR</th>
+                <th>ST Depression</th>
+                <th>Risk Score</th>
+                <th>Date</th>
+            </tr>
+            {% for record in records %}
+            <tr>
+                <td>{{ record.id }}</td>
+                <td>{{ record.name }}</td>
+                <td>{{ record.email }}</td>
+                <td>{{ record.age }}</td>
+                <td>{{ record.gender }}</td>
+                <td>
+                    {% if record.cp == 0 %}Typical Angina
+                    {% elif record.cp == 1 %}Atypical Angina
+                    {% elif record.cp == 2 %}Non-Anginal
+                    {% else %}Asymptotic{% endif %}
+                </td>
+                <td>{{ record.trestbps }} mmHg</td>
+                <td>{{ record.chol }} mg/dL</td>
+                <td>{{ record.thalach }} bpm</td>
+                <td>{{ record.oldpeak }} mm</td>
+                <td style="background-color: {{ '#ffcccc' if record.average_risk > 0.5 else '#ccffcc' }}">
+                    {{ "%.2f"|format(record.average_risk) }}
+                </td>
+                <td>{{ record.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

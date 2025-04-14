@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction - HeartCare</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static',filename='styles/style.css') }}"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<style>
+    .flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+</style>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+                <div class="flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+    <main class="prediction-page">
+        <header>
+            <nav class="glass-nav">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                    <a href="https://veerop.github.io/heartcare/index.html"><span>HeartCare</span></a>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="https://veerop.github.io/heartcare/index.html" class="active">Home</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/about.html">About</a></li>
+                    <li><a href="https://hdd-u6pz.onrender.com/" target="_blank">Predict</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/blog.html">Blog</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/faq.html">FAQ</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/contact.html">Contact</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/login-register.html" class="btn-login">Login</a></li>
+                </ul>
+                <div class="hamburger">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+            </nav>
+        </header>
+        <section class="prediction-hero glass-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <h1>Heart Disease Risk Assessment</h1>
+            <p>Fill in your health information to receive a personalized risk assessment.</p>
+        </section>
+
+        <form id="survey-form" action="/api" method="post" class="prediction-form glass-card">
+            <div class="form-section">
+                <h2>Personal Information</h2>
+                <div class="form-group">
+                    <label for="name" id="name-label">Name</label>
+                    <input type="text" name="name" required placeholder="Enter your Name" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="email" id="email-label">Email</label>
+                    <input type="email" name="email" required placeholder="Enter your Email" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" name="age" min="5" max="100" placeholder="Age" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select name="gender" id="dropdown">
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Medical Information</h2>
+                <div class="form-group">
+                    <label for="cp">Chest Pain Types</label>
+                    <select name="cp" id="dropdown">
+                        <option value="0">Typical Angina</option>
+                        <option value="1">Atypical Angina</option>
+                        <option value="2">Non-Anginal</option>
+                        <option value="3">Asymptotic</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trestbps">Resting Blood Pressure (in mm/Hg)</label>
+                    <input type="number" name="trestbps" min="94" max="200" placeholder="Resting Blood Pressure">
+                </div>
+                <div class="form-group">
+                    <label for="chol">Cholesterol Level</label>
+                    <input type="number" name="chol" min="126" max="564" placeholder="Cholesterol">
+                </div>
+                <div class="form-group">
+                    <label for="fbs">Fasting Blood Pressure > 120mg/Dl?</label>
+                    <select name="fbs" id="dropdown">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>  
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="restecg">Resting Electro Cardio Graphic Result</label>
+                    <select name="restecg" id="dropdown">
+                        <option>Normal</option>
+                        <option>STT Abnormality</option>
+                        <option>IV Hypertrophy</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Heart Activity</h2>
+                <div class="form-group">
+                    <label for="thalach">Maximum Heart Rate Achieved</label>
+                    <input type="number" name="thalach" min="71" max="202" placeholder="Maximum Heart Rate Achieved">
+                </div>
+                <div class="form-group">
+                    <label for="exang">Does Exercise Induced Angina?</label>
+                    <select name="exang" id="dropdown">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="oldpeak">Old Peak (ST Depression Induced by Exercise)</label>
+                    <span class="input-note">Permissible Values: 0 - 6.7</span>
+                    <input type="number" name="oldpeak" min="0" max="6.2" placeholder="Old Peak" step="any">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Additional Factors</h2>
+                <div class="form-group">
+                    <label for="slope">Slope of ST Segment</label>
+                    <select name="slope" id="dropdown">
+                        <option>2</option>
+                        <option>0</option>
+                        <option>1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ca">Number of major vessels (0-3) colored by flourosopy</label>
+                    <select name="ca" id="dropdown">
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="thal">Thal Type</label>
+                    <select name="thal" id="dropdown">
+                        <option>Normal</option>
+                        <option>Fixed Defect</option>
+                        <option>Reversible Defect</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comments">Any additional information we should know?</label>
+                    <textarea name="comments" id="comments" cols="30" rows="5"></textarea>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="reset" class="btn-secondary">Reset Form</button>
+                <button type="submit" id="submit" class="btn-primary">Submit</button>
+            </div>
+        </form>
+
+    </main>
+    <footer class="glass-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>HeartCare</h3>
+                <p>Empowering you with knowledge to fight heart disease through early detection.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="https://veerop.github.io/heartcare/index.html">Home</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/about.html">About</a></li>
+                    <li><a href="https://hdd-u6pz.onrender.com/">Prediction</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/blog.html">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="https://veerop.github.io/heartcare/faq.html">FAQ</a></li>
+                    <li><a href="https://veerop.github.io/heartcare/contact.html">Contact Us</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 HeartCare. All rights reserved.</p>
+        </div>
+    </footer>
+
+
+
+    <script src="script.js"></script>
+    <script>
+        function savedetails() {
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            localStorage.setItem("email", email);
+            localStorage.setItem("name", name);
+        }
+
+        document.getElementById('survey-form').addEventListener('submit', function(e) {
+            savedetails();
+            // Form will submit to /api as specified in the form action
+        });
+    </script>
+</body>
+</html>

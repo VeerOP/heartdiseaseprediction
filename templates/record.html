@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Records</title>
+</head>
+<body>
+    <h1>Patient Records</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Prediction Results</th>
+            <th>Average Risk</th>
+            <th>Date</th>
+        </tr>
+        {% for record in records %}
+        <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.name }}</td>
+            <td>{{ record.email }}</td>
+            <td>{{ record.age }}</td>
+            <td>{{ record.prediction_results }}</td>
+            <td>{{ record.average_risk }}</td>
+            <td>{{ record.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
